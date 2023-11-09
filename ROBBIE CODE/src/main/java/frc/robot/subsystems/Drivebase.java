@@ -6,27 +6,23 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.SparkMaxAlternateEncoder.Type;
-import com.revrobotics.SparkMaxRelativeEncoder;
+import com.revrobotics.SparkMaxAlternateEncoder;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import com.revrobotics.*;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import com.revrobotics.RelativeEncoder;
-
-
-
-
-
-
-
-
+import java.lang.Math;
 
 public class Drivebase extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
-  public Drivebase() {}
+  public Drivebase() {
+        m_leftGroup.setInverted(true);
+  }
 
-  CANSparkMax m_rightMaster = new CANSparkMax(1, MotorType.kBrushless);
+    CANSparkMax m_rightMaster = new CANSparkMax(1, MotorType.kBrushless);
     CANSparkMax m_rightSlave = new CANSparkMax(2, MotorType.kBrushless);
     CANSparkMax m_leftMaster = new CANSparkMax(3, MotorType.kBrushless);
     CANSparkMax m_leftSlave = new CANSparkMax(4, MotorType.kBrushless);
@@ -34,10 +30,9 @@ public class Drivebase extends SubsystemBase {
     MotorControllerGroup m_rightGroup = new MotorControllerGroup(m_rightMaster, m_rightSlave);
     MotorControllerGroup m_leftGroup = new MotorControllerGroup(m_leftMaster, m_leftSlave);
 
-    m_leftGroup.setInverted(true);
 
-    RelativeEncoder m_rightEncoder = m_rightMaster.getAlternateEncoder(Type.kQuadrature, 1480);
-    RelativeEncoder m_leftEncoder = m_leftMaster.getAlternateEncoder(Type.kQuadrature, 1480);
+    RelativeEncoder m_rightEncoder = m_rightMaster.getAlternateEncoder(Type.kQuadrature, 4096);
+    RelativeEncoder m_leftEncoder = m_leftMaster.getAlternateEncoder(Type.kQuadrature, 4096);
 
     DifferentialDrive m_differentialDrive = new DifferentialDrive(m_rightGroup, m_leftGroup);
     
@@ -49,6 +44,19 @@ public class Drivebase extends SubsystemBase {
   public void resetEncoders() {
     m_rightEncoder.setPosition(0);
     m_leftEncoder.setPosition(0);
+  }
+
+
+  public double getLeftDistanceInch() {
+    return (m_leftEncoder.getPosition()/4096 * Constants.diameter * Math.PI);
+  }
+
+  public double getRightDistanceInch() {
+    return (m_rightEncoder.getPosition()/4096 * Constants.diameter * Math.PI);
+  }
+
+  public double getAverageDistanceInch() {
+    return getLeftDistanceInch() + getRightDistanceInch();
   }
 
   /**
