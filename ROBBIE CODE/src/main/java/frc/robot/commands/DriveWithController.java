@@ -4,24 +4,23 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drivebase;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 /** An example command that uses an example subsystem. */
-public class DriveForward extends CommandBase {
+public class DriveWithController extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private Drivebase m_db;
-  private int distance;
-
+  private CommandXboxController m_XboxController;
 
   /**
    * Creates a new ExampleCommand.
    *
    * @param subsystem The subsystem used by this command.
    */
-  public DriveForward(Drivebase db, int inches) {
+  public DriveWithController(Drivebase db) {
     m_db = db;
-    distance = inches;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(db);
   }
@@ -35,19 +34,16 @@ public class DriveForward extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_db.arcadeDrive(0.5,0);
-    m_db.resetEncoders();
+    m_db.arcadeDrive(m_XboxController.getLeftY(), m_XboxController.getRightX());
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-    m_db.arcadeDrive(0,0);
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_db.getAverageDistanceInch() >= distance;
+    return false;
   }
 }
